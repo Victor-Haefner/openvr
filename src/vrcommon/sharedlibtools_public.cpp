@@ -34,7 +34,7 @@ void SharedLib_Unload( SharedLibHandle lib )
 #if defined( _WIN32)
 	FreeLibrary( (HMODULE)lib );
 #elif defined(POSIX)
-	dlclose( lib );
+	if (lib) dlclose( lib );
 #endif
 }
 
