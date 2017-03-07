@@ -1,6 +1,7 @@
 //========= Copyright Valve Corporation ============//
 #include "sharedlibtools_public.h"
 #include <string.h>
+#include <stdio.h>
 
 #if defined(_WIN32)
 #include <Windows.h>
@@ -15,7 +16,9 @@ SharedLibHandle SharedLib_Load( const char *pchPath )
 #if defined( _WIN32)
 	return (SharedLibHandle)LoadLibraryEx( pchPath, NULL, LOAD_WITH_ALTERED_SEARCH_PATH );
 #elif defined(POSIX)
-	return (SharedLibHandle)dlopen(pchPath, RTLD_LOCAL|RTLD_NOW);
+	SharedLibHandle h = (SharedLibHandle)dlopen(pchPath, RTLD_LOCAL|RTLD_NOW);
+	if (!h) printf("dlopen failed: %s\n", dlerror());
+	return h;
 #endif
 }
 
