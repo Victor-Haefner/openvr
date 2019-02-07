@@ -9,7 +9,7 @@
 
 #if defined( WIN32 )
 #include <windows.h>
-#include <Shlobj.h>
+#include <shlobj.h>
 
 #undef GetEnvironmentVariable
 #elif defined OSX
@@ -23,7 +23,9 @@
 #include <algorithm>
 
 #ifndef VRLog
-	#if defined( WIN32 )
+	#if defined( __MINGW32__ )
+		#define VRLog(args...)		fprintf(stderr, args)
+	#elif defined( WIN32 )
 		#define VRLog(fmt, ...)		fprintf(stderr, fmt, __VA_ARGS__)
 	#else
 		#define VRLog(args...)		fprintf(stderr, args)
@@ -58,7 +60,7 @@ static std::string GetAppSettingsPath()
 		NSString *resolvedPath = [paths objectAtIndex:0];
 		resolvedPath = [resolvedPath stringByAppendingPathComponent: @"OpenVR"];
 		
-		if ( ![[NSFileManager new] createDirectoryAtPath: resolvedPath withIntermediateDirectories:YES attributes:nil error:nil] )
+		if ( ![[NSFileManager defaultManager] createDirectoryAtPath: resolvedPath withIntermediateDirectories:YES attributes:nil error:nil] )
 		{
 			return "";
 		}
@@ -400,7 +402,7 @@ bool CVRPathRegistry_Public::GetPaths( std::string *psRuntimePath, std::string *
 
 	if ( nCountEnvironmentVariables == 3 )
 	{
-		// all three environment variables where set, so we don't need the physical file
+		// all three environment variables were set, so we don't need the physical file
 		return true;
 	}
 
